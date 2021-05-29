@@ -11,8 +11,9 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import API from '../Services/API';
+import API from '../../Services/API';
 
 let pokemonNumber = 1,
   counter = 1;
@@ -144,7 +145,7 @@ export default class MainScreen extends Component {
 
   getID = async value => {
     // Pega o id do pokemon de acordo com o nome ou id digitado
-    const response = await api.get(value + '/');
+    const response = await API.get(value + '/');
     this.setState({
       id: response.data.id,
     });
@@ -177,11 +178,6 @@ export default class MainScreen extends Component {
               Pokedéx
             </Text>
             <View style={styles.containerHeader}>
-              <Image
-                resizeMode="contain"
-                //source={require('../../img/loupe.png')}
-                style={styles.imagemSearch}
-              />
               <TextInput
                 style={styles.input}
                 placeholder="Buscar por nome ou ID..."
@@ -324,7 +320,7 @@ const styles = StyleSheet.create({
     marginLeft: '2%',
   },
   input: {
-    color: 'white',
+    color: '#000',
     backgroundColor: 'white',
     padding: 10,
     fontSize: 14,
