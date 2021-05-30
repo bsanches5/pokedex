@@ -8,15 +8,37 @@ import {
   ActivityIndicator,
   FlatList,
   StatusBar,
-  TextInput,
   StyleSheet,
+  TextInput,
 } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import API from '../../Services/API';
 
 let pokemonNumber = 1,
-  counter = 1;
+  counter = 1,
+  themeColor;
+
+const TYPE_COLORS = {
+  bug: '#dced51',
+  dark: '#4f3a2d',
+  dragon: '#755edf',
+  electric: '#f5c038',
+  fairy: '#f4b1f4',
+  fighting: '#382b38',
+  fire: '#ff673d',
+  flying: '#a3b3f7',
+  ghost: '#6060b2',
+  grass: '#9ae65e',
+  ground: '#d3b357',
+  ice: '#a3e7fd',
+  normal: '#c8c4bc',
+  poison: '#934594',
+  psychic: '#ed4882',
+  rock: '#b9a156',
+  steel: '#b5b5c3',
+  water: '#3295f6',
+};
 
 export default class MainScreen extends Component {
   constructor(props) {
@@ -25,11 +47,11 @@ export default class MainScreen extends Component {
     this.state = {
       Names: [],
       loading: true,
-      color: '#fc474f',
       counter: counter,
       previousPage: '',
       nextPage: '',
       id: '',
+      pokemonId: '',
     };
 
     //this.CharacterScreen = this.CharacterScreen.bind(this);
@@ -52,12 +74,7 @@ export default class MainScreen extends Component {
 
   previousPage = async () => {
     // Verificação caso o usuário já permanece na primeira página
-    if (counter == 1)
-      Alert.alert(
-        'Ação negada!',
-        'Você já está na primeira página, não há páginas anteriores a esta!',
-      );
-    else {
+    if (counter !== 1) {
       counter--;
       this.setState({counter: counter});
 
@@ -74,12 +91,7 @@ export default class MainScreen extends Component {
 
   nextPage = async () => {
     // Verificação caso o usuário já permanece na última página
-    if (counter == 41)
-      Alert.alert(
-        'Ação negada!',
-        'Você já está na última página, não há páginas após esta!',
-      );
-    else {
+    if (counter !== 29) {
       counter++;
       this.setState({counter: counter});
 
@@ -114,6 +126,18 @@ export default class MainScreen extends Component {
   //   this.props.navigation.navigate('CharacterScreen', {id: id});
   // }
 
+  // Pega o type do pokemon
+  // setPokemonGridColor = async value => {
+  //   const response = await API.get(value + '/');
+  //   this.setState({
+  //     pokemonId: response.data.id,
+  //   });
+
+  //   const types = response.data.types.map(type => type.type.name);
+  //   themeColor = `${TYPE_COLORS[types[types.length - 1]]}`;
+  //   this.setState({color: themeColor});
+  // };
+
   renderItem = data => {
     // Define a numeração do pokemon
     const url = data.item.url;
@@ -121,23 +145,28 @@ export default class MainScreen extends Component {
     // Pega a imagem do pokemon de acordo com sua numeração
     const imageUrl =
       'https://pokeres.bastionbot.org/images/pokemon/' + pokemonNumber + '.png';
-      // Transforma a primeira letra em maiúsculo
+    // Muda a primeira letra do nome do pokemon para maiúsculo
     const name = data.item.name;
     const pokemonName = name.charAt(0).toUpperCase() + name.slice(1);
+    // // Pega o type do pokemon
+
+    // const types = pokemonNumber.data.types.map(type => type.type.name);
+    // themeColor = `${TYPE_COLORS[types[types.length - 1]]}`;
+    // this.setState({color: themeColor});
 
     return (
       <TouchableOpacity
         style={styles.gridButton}
-        onPress={() => ('')}>
+        onPress={() => console.log('***TYPE:', this.setPokemonGridColor())}>
         <StatusBar backgroundColor="#fc474f" barStyle="light-content" />
-        <View style={[styles.grid, {backgroundColor: this.state.color}]}>
-          <Text style={styles.indexFont}>{pokemonNumber}</Text>
+        <View style={[styles.grid, {backgroundColor: '#fc474f'}]}>
+          <Text style={styles.pokemonID}>{pokemonNumber}</Text>
           <Image
             resizeMode="contain"
             source={{uri: imageUrl}}
-            style={styles.imagem}
+            style={styles.image}
           />
-          <Text style={styles.fonte}>{pokemonName}</Text>
+          <Text style={styles.font}>{pokemonName}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -174,54 +203,63 @@ export default class MainScreen extends Component {
       return (
         <View style={{flex: 1}}>
           <View style={styles.header}>
-            <Text style={styles.presentationFont}>
-              Pokedéx
-            </Text>
-            <View style={styles.containerHeader}>
+            <Text style={styles.title}>Pokedéx</Text>
+            <View style={styles.subHeader}>
+              <Image
+                source={require('../../../assets/imgs/search-icon.png')}
+                style={styles.searchIcon}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Buscar por nome ou ID..."
                 onChangeText={value => this.getID(value.toLocaleLowerCase())}
+                underlineColorAndroid="transparent"
               />
             </View>
           </View>
-          <View>
-            <View style={styles.containerArrows}>
-              <TouchableOpacity
-                style={styles.arrowButton}
-                onPress={this.previousPage}>
-                <Image
-                  resizeMode="contain"
-                  //source={require('../../img/left-arrow.png')}
-                  style={styles.imagemArrow}
-                />
-              </TouchableOpacity>
 
-              <View style={styles.arrowButton}>
-                <Text style={styles.count}>{this.state.counter}</Text>
-              </View>
-
-              <TouchableOpacity
-                style={styles.arrowButton}
-                onPress={this.nextPage}>
-                <Image
-                  resizeMode="contain"
-                  //source={require('../../img/right-arrow.png')}
-                  style={styles.imagemArrow}
-                />
-              </TouchableOpacity>
+          <View style={styles.containerArrows}>
+            <View style={{flex: 1}}>
+              {this.state.counter === 1 ? null : (
+                <TouchableOpacity
+                  style={styles.arrowButtonLeft}
+                  onPress={this.previousPage}>
+                  <Icon
+                    name="arrow-alt-circle-left"
+                    size={35}
+                    color="#fc474f"
+                  />
+                </TouchableOpacity>
+              )}
             </View>
 
-            <FlatList
-              numColumns={2}
-              data={Names}
-              extraData={pokemonNumber}
-              refreshing={true}
-              renderItem={this.renderItem}
-              keyExtractor={item => item}
-              style={{marginBottom: '21.3%'}}
-            />
+            <View style={{flex: 1}}>
+              <Text style={styles.countFont}>{this.state.counter}</Text>
+            </View>
+
+            <View style={{flex: 1}}>
+              {this.state.counter === 29 ? null : (
+                <TouchableOpacity
+                  style={styles.arrowButtonRight}
+                  onPress={this.nextPage}>
+                  <Icon
+                    name="arrow-alt-circle-right"
+                    size={35}
+                    color="#fc474f"
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
+
+          <FlatList
+            numColumns={2}
+            data={Names}
+            extraData={pokemonNumber}
+            refreshing={true}
+            renderItem={this.renderItem}
+            keyExtractor={item => item}
+          />
         </View>
       );
     } else {
@@ -237,7 +275,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   grid: {
-    flex: 1,
     margin: '5%',
     flexDirection: 'column',
     alignItems: 'center',
@@ -247,44 +284,56 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   gridButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
     width: '50%',
   },
-  fonte: {
+  font: {
     color: 'white',
     fontSize: 22,
     fontWeight: 'bold',
     marginHorizontal: '7%',
     marginBottom: '10%',
   },
-  indexFont: {
+  pokemonID: {
     alignSelf: 'flex-start',
     marginLeft: '3%',
     marginTop: '2%',
     color: 'white',
+    fontSize: 18,
   },
-  presentationFont: {
+  title: {
     color: 'white',
     fontSize: 22,
     fontWeight: 'bold',
   },
-  imagem: {
-    backgroundColor: 'transparent',
+  image: {
     height: 100,
     width: 100,
   },
-  imagemArrow: {
-    backgroundColor: 'transparent',
-    height: 30,
-    width: 30,
+  iconArrow: {
+    color: '#fc474f',
+    height: 50,
+    width: '20%',
   },
-  imagemSearch: {
-    backgroundColor: 'transparent',
+  imageSearch: {
     height: 20,
     width: 20,
   },
-  arrowButton: {
-    backgroundColor: 'transparent',
+  arrowButtonLeft: {
+    marginTop: '2.55%',
+    padding: '2%',
+    paddingLeft: 20,
+    marginBottom: '2.5%',
+    alignSelf: 'flex-start',
+  },
+  arrowButtonRight: {
+    marginTop: '2.55%',
+    padding: '2%',
+    paddingRight: 20,
+    marginBottom: '2.5%',
+    alignSelf: 'flex-end',
+  },
+  count: {
     marginTop: '2.55%',
     marginHorizontal: '5%',
     padding: '2%',
@@ -292,32 +341,30 @@ const styles = StyleSheet.create({
   },
   containerArrows: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'white',
+    width: '100%',
+    height: 70,
   },
-  count: {
+  countFont: {
     fontWeight: 'bold',
     fontSize: 25,
-    color: '#c3c3c3',
+    color: '#fc474f',
+    alignSelf: 'center',
   },
   header: {
-    height: '12%',
+    height: '15%',
     width: '100%',
     backgroundColor: '#fc474f',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  containerHeader: {
-    flex: 1,
+  subHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  search: {
-    color: 'white',
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginLeft: '2%',
+    paddingTop: 10,
   },
   input: {
     color: '#000',
@@ -328,5 +375,11 @@ const styles = StyleSheet.create({
     height: 36,
     width: '60%',
     textAlign: 'center',
+  },
+  searchIcon: {
+    padding: 13,
+    width: 20,
+    height: 20,
+    marginRight: 7,
   },
 });
