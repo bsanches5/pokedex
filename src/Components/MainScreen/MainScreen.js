@@ -16,29 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import API from '../../Services/API';
 
 let pokemonNumber = 1,
-  counter = 1,
-  themeColor;
-
-const TYPE_COLORS = {
-  bug: '#dced51',
-  dark: '#4f3a2d',
-  dragon: '#755edf',
-  electric: '#f5c038',
-  fairy: '#f4b1f4',
-  fighting: '#382b38',
-  fire: '#ff673d',
-  flying: '#a3b3f7',
-  ghost: '#6060b2',
-  grass: '#9ae65e',
-  ground: '#d3b357',
-  ice: '#a3e7fd',
-  normal: '#c8c4bc',
-  poison: '#934594',
-  psychic: '#ed4882',
-  rock: '#b9a156',
-  steel: '#b5b5c3',
-  water: '#3295f6',
-};
+  counter = 1;
 
 export default class MainScreen extends Component {
   constructor(props) {
@@ -51,10 +29,9 @@ export default class MainScreen extends Component {
       previousPage: '',
       nextPage: '',
       id: '',
-      pokemonId: '',
     };
 
-    //this.CharacterScreen = this.CharacterScreen.bind(this);
+    this.CharacterScreen = this.CharacterScreen.bind(this);
     this.getID = this.getID.bind(this);
   }
 
@@ -121,10 +98,10 @@ export default class MainScreen extends Component {
     });
   };
 
-  // CharacterScreen(id) {
-  //   // Chama a próxima tela passando o id do pokemon selecionado
-  //   this.props.navigation.navigate('CharacterScreen', {id: id});
-  // }
+  CharacterScreen(id) {
+    // Chama a próxima tela passando o id do pokemon selecionado
+    this.props.navigation.navigate('Character', {id: id});
+  }
 
   // Pega o type do pokemon
   // setPokemonGridColor = async value => {
@@ -155,20 +132,20 @@ export default class MainScreen extends Component {
     // this.setState({color: themeColor});
 
     return (
-      <TouchableOpacity
-        style={styles.gridButton}
-        onPress={() => console.log('***TYPE:', this.setPokemonGridColor())}>
-        <StatusBar backgroundColor="#fc474f" barStyle="light-content" />
-        <View style={[styles.grid, {backgroundColor: '#fc474f'}]}>
-          <Text style={styles.pokemonID}>{pokemonNumber}</Text>
-          <Image
-            resizeMode="contain"
-            source={{uri: imageUrl}}
-            style={styles.image}
-          />
-          <Text style={styles.font}>{pokemonName}</Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.gridContainer}>
+        <TouchableOpacity onPress={() => this.CharacterScreen(pokemonNumber)}>
+          <StatusBar backgroundColor="#fc474f" barStyle="light-content" />
+          <View style={styles.gridButtons}>
+            <Text style={styles.pokemonID}>{pokemonNumber}</Text>
+            <Image
+              resizeMode="contain"
+              source={{uri: imageUrl}}
+              style={styles.image}
+            />
+            <Text style={styles.font}>{pokemonName}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -224,11 +201,7 @@ export default class MainScreen extends Component {
                 <TouchableOpacity
                   style={styles.arrowButtonLeft}
                   onPress={this.previousPage}>
-                  <Icon
-                    name="arrow-alt-circle-left"
-                    size={35}
-                    color="#fc474f"
-                  />
+                  <Icon name="arrow-alt-circle-left" size={35} color="#FFF" />
                 </TouchableOpacity>
               )}
             </View>
@@ -242,11 +215,7 @@ export default class MainScreen extends Component {
                 <TouchableOpacity
                   style={styles.arrowButtonRight}
                   onPress={this.nextPage}>
-                  <Icon
-                    name="arrow-alt-circle-right"
-                    size={35}
-                    color="#fc474f"
-                  />
+                  <Icon name="arrow-alt-circle-right" size={35} color="#FFF" />
                 </TouchableOpacity>
               )}
             </View>
@@ -259,6 +228,7 @@ export default class MainScreen extends Component {
             refreshing={true}
             renderItem={this.renderItem}
             keyExtractor={item => item}
+            resizeMode="contain"
           />
         </View>
       );
@@ -274,7 +244,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  grid: {
+  gridButtons: {
     margin: '5%',
     flexDirection: 'column',
     alignItems: 'center',
@@ -282,13 +252,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     elevation: 5.5,
     borderBottomWidth: 0,
+    backgroundColor: '#FFF',
   },
-  gridButton: {
-    backgroundColor: 'white',
+  gridContainer: {
+    backgroundColor: '#fc474f',
     width: '50%',
   },
   font: {
-    color: 'white',
+    color: '#000',
     fontSize: 22,
     fontWeight: 'bold',
     marginHorizontal: '7%',
@@ -298,7 +269,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginLeft: '3%',
     marginTop: '2%',
-    color: 'white',
+    color: '#000',
     fontSize: 18,
   },
   title: {
@@ -311,7 +282,7 @@ const styles = StyleSheet.create({
     width: 100,
   },
   iconArrow: {
-    color: '#fc474f',
+    color: 'white',
     height: 50,
     width: '20%',
   },
@@ -343,14 +314,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#fc474f',
     width: '100%',
     height: 70,
   },
   countFont: {
     fontWeight: 'bold',
     fontSize: 25,
-    color: '#fc474f',
+    color: '#FFF',
     alignSelf: 'center',
   },
   header: {
@@ -380,6 +351,6 @@ const styles = StyleSheet.create({
     padding: 13,
     width: 20,
     height: 20,
-    marginRight: 7,
+    marginRight: 10,
   },
 });
