@@ -41,12 +41,14 @@ export default class MainScreen extends Component {
 
     // Requisição dos nomes de cada pokemon e os links para as próximas páginas
     var response = await API.get();
+    console.log(response);
     this.setState({
       Names: response.data.results,
       loading: false,
       nextPage: response.data.next,
       previousPage: response.data.previous,
     });
+
   }
 
   previousPage = async () => {
@@ -103,21 +105,11 @@ export default class MainScreen extends Component {
     this.props.navigation.navigate('Character', {id: id});
   }
 
-  // Pega o type do pokemon
-  // setPokemonGridColor = async value => {
-  //   const response = await API.get(value + '/');
-  //   this.setState({
-  //     pokemonId: response.data.id,
-  //   });
-
-  //   const types = response.data.types.map(type => type.type.name);
-  //   themeColor = `${TYPE_COLORS[types[types.length - 1]]}`;
-  //   this.setState({color: themeColor});
-  // };
-
+  
   renderItem = data => {
     // Define a numeração do pokemon
     const url = data.item.url;
+
     const pokemonNumber = url.split('/')[url.split('/').length - 2];
     // Pega a imagem do pokemon de acordo com sua numeração
     const imageUrl =
@@ -126,10 +118,12 @@ export default class MainScreen extends Component {
     const name = data.item.name;
     const pokemonName = name.charAt(0).toUpperCase() + name.slice(1);
     // // Pega o type do pokemon
-
-    // const types = pokemonNumber.data.types.map(type => type.type.name);
-    // themeColor = `${TYPE_COLORS[types[types.length - 1]]}`;
-    // this.setState({color: themeColor});
+    // const types = data.types.map(type => type.type.name);
+    // console.log(types)
+    // const pokemonType = types.toString().split(',', 6);
+    // this.setState({
+    //   type: pokemonType[0],
+    // });
 
     return (
       <View style={styles.gridContainer}>
@@ -142,7 +136,7 @@ export default class MainScreen extends Component {
               source={{uri: imageUrl}}
               style={styles.image}
             />
-            <Text style={styles.font}>{pokemonName}</Text>
+            <Text style={styles.nomePokemon}>{pokemonName}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -178,7 +172,7 @@ export default class MainScreen extends Component {
 
     if (!loading) {
       return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: '#fc474f'}}>
           <View style={styles.header}>
             <Text style={styles.title}>Pokedéx</Text>
             <View style={styles.subHeader}>
@@ -258,7 +252,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fc474f',
     width: '50%',
   },
-  font: {
+  nomePokemon: {
     color: '#000',
     fontSize: 22,
     fontWeight: 'bold',

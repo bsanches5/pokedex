@@ -75,10 +75,11 @@ export default class CharacterScreen extends Component {
   }
 
   async componentDidMount() {
-    const pokemonNumber = this.props.route.params.id
+    const pokemonNumber = this.props.route.params.id;
 
     // Requisição das informações básicas e conversão das mesmas
     const response = await API.get(pokemonNumber + '/');
+    console.log(response);
     this.setState({
       loading: false,
       elementos: response.data.types.type,
@@ -122,171 +123,163 @@ export default class CharacterScreen extends Component {
     this.props.navigation.navigate('Main');
   }
 
+  pokemonNameToUpperCase(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+
   render() {
     const {loading} = this.state;
     const pokemonNumber = this.props.route.params.id;
-    const imageUrl = 'https://pokeres.bastionbot.org/images/pokemon/' + pokemonNumber + '.png';
+    const imageUrl =
+      'https://pokeres.bastionbot.org/images/pokemon/' + pokemonNumber + '.png';
 
     if (!loading) {
       return (
-        <View style={{flex: 1, backgroundColor: themeColor}}>
-          <ScrollView>
-            <StatusBar backgroundColor={themeColor} barStyle="light-content" />
-            <View style={styles.container}>
-              {/* Opções do topo (botão para voltar, nome e ID do pokemon) */}
-              <View style={[styles.box1, {backgroundColor: themeColor}]}>
-                <View style={{flexDirection: 'row'}}>
-                  <TouchableOpacity
-                    style={styles.arrowButton}
-                    onPress={this.voltar}>
-                    <Icon
-                      name="arrow-left"
-                      size={35}
-                      color="#FFF"
-                    />
-                  </TouchableOpacity>
+        <ScrollView style={{flex: 1, backgroundColor: themeColor}}>
+          <StatusBar backgroundColor={themeColor} barStyle="light-content" />
+          <View style={styles.container}>
+            <View style={[styles.box1, {backgroundColor: themeColor}]}>
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={styles.arrowButton}
+                  onPress={this.voltar}>
+                  <Icon name="arrow-left" size={35} color="#FFF" />
+                </TouchableOpacity>
 
-                  <View style={styles.arrowButton}>
-                    <Text style={styles.headerFont}>{this.state.nome}</Text>
-                  </View>
+                <Text style={styles.pokemonName}>
+                  {this.pokemonNameToUpperCase(this.state.nome)}
+                </Text>
 
-                  <View style={styles.arrowButton}>
-                    <Text style={styles.headerFont}>#{pokemonNumber}</Text>
-                  </View>
-                </View>
-                <Image
-                  resizeMode="contain"
-                  source={{uri: imageUrl}}
-                  style={styles.imagem}
-                />
+                <Text style={styles.pokemonIndex}>#{pokemonNumber}</Text>
               </View>
-              {/* View para segunda caixa (a parte branca com as quinas de cima arrendondadas) */}
-              <View style={[styles.box2, {backgroundColor: 'white'}]}>
-                {/* Descrição do pokemon */}
-                <Text style={[styles.titulo, {color: themeColor}]}>
-                  Descrição
+              <Image
+                resizeMode="contain"
+                source={{uri: imageUrl}}
+                style={styles.imagem}
+              />
+            </View>
+            {/* View para segunda caixa (a parte branca com as quinas de cima arrendondadas) */}
+            <View style={[styles.box2, {backgroundColor: 'white'}]}>
+              {/* Descrição do pokemon */}
+              <Text style={[styles.titulo, {color: themeColor}]}>
+                Descrição
+              </Text>
+              <Text style={styles.descricao}>{this.state.descricao}</Text>
+              {/* Status do pokemon */}
+              <Text style={[styles.titulo, {color: themeColor}]}>Status</Text>
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>HP</Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.hp * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.hp}
                 </Text>
-                <Text style={styles.descricao}>{this.state.descricao}</Text>
-                {/* Status do pokemon */}
-                <Text style={[styles.titulo, {color: themeColor}]}>Status</Text>
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>HP</Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.hp * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.hp}
-                  </Text>
-                </View>
+              </View>
 
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>
-                    Attack
-                  </Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.attack * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.attack}
-                  </Text>
-                </View>
-
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>
-                    Defense
-                  </Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.defense * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.defense}
-                  </Text>
-                </View>
-
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>
-                    Speed
-                  </Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.speed * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.speed}
-                  </Text>
-                </View>
-
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>
-                    Special Attack
-                  </Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.specialAttack * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.specialAttack}
-                  </Text>
-                </View>
-
-                <View style={styles.directionStatus}>
-                  <Text style={[styles.status, {color: themeColor}]}>
-                    Special Defense
-                  </Text>
-                  <ProgressBarAndroid
-                    style={[styles.progressBar, {color: themeColor}]}
-                    styleAttr="Horizontal"
-                    indeterminate={false}
-                    progress={this.state.specialDefense * 0.01}
-                  />
-                  <Text style={[styles.numberStatus, {color: themeColor}]}>
-                    {this.state.specialDefense}
-                  </Text>
-                </View>
-                {/* Informações básicas do pokemon */}
-                <Text style={[styles.titulo, {color: themeColor}]}>
-                  Informações básicas
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>Attack</Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.attack * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.attack}
                 </Text>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={[styles.infoTitle, {color: themeColor}]}>
-                    Peso:{' '}
-                  </Text>
-                  <Text style={styles.info}>
-                    {this.state.peso} hectogramas ({this.state.pesoKg}{' '}
-                    quilogramas)
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={[styles.infoTitle, {color: themeColor}]}>
-                    Altura:{' '}
-                  </Text>
-                  <Text style={styles.info}>
-                    {this.state.altura} decimetros ({this.state.alturaM} metros)
-                  </Text>
-                </View>
-                <View style={{flexDirection: 'row', marginBottom: '3%'}}>
-                  <Text style={[styles.infoTitle, {color: themeColor}]}>
-                    Experiência base:{' '}
-                  </Text>
-                  <Text style={styles.info}>{this.state.expBase} pontos</Text>
-                </View>
+              </View>
+
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>
+                  Defense
+                </Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.defense * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.defense}
+                </Text>
+              </View>
+
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>Speed</Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.speed * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.speed}
+                </Text>
+              </View>
+
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>
+                  Special Attack
+                </Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.specialAttack * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.specialAttack}
+                </Text>
+              </View>
+
+              <View style={styles.directionStatus}>
+                <Text style={[styles.status, {color: themeColor}]}>
+                  Special Defense
+                </Text>
+                <ProgressBarAndroid
+                  style={[styles.progressBar, {color: themeColor}]}
+                  styleAttr="Horizontal"
+                  indeterminate={false}
+                  progress={this.state.specialDefense * 0.01}
+                />
+                <Text style={[styles.numberStatus, {color: themeColor}]}>
+                  {this.state.specialDefense}
+                </Text>
+              </View>
+              {/* Informações básicas do pokemon */}
+              <Text style={[styles.titulo, {color: themeColor}]}>
+                Informações básicas
+              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.infoTitle, {color: themeColor}]}>
+                  Peso:{' '}
+                </Text>
+                <Text style={styles.info}>
+                  {this.state.peso} hectogramas ({this.state.pesoKg}{' '}
+                  quilogramas)
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.infoTitle, {color: themeColor}]}>
+                  Altura:{' '}
+                </Text>
+                <Text style={styles.info}>
+                  {this.state.altura} decimetros ({this.state.alturaM} metros)
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', marginBottom: '3%'}}>
+                <Text style={[styles.infoTitle, {color: themeColor}]}>
+                  Experiência base:{' '}
+                </Text>
+                <Text style={styles.info}>{this.state.expBase} pontos</Text>
               </View>
             </View>
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
       );
     } else {
       return <ActivityIndicator />;
@@ -339,16 +332,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },
-  imagemArrow: {
-    backgroundColor: 'transparent',
-    height: 30,
-    width: 30,
-  },
   arrowButton: {
-    backgroundColor: 'transparent',
-    alignSelf: 'center',
     marginTop: '2.55%',
-    marginHorizontal: '6%',
+    marginLeft: 15,
     padding: '2%',
     marginBottom: '2.5%',
   },
@@ -361,10 +347,27 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: '8%',
   },
-  headerFont: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
+  pokemonName: {
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
+    marginTop: '2.55%',
+    padding: '2%',
+  },
+  pokemonIndex: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: '2.55%',
+    padding: '2%',
+    marginRight: 15,
   },
   status: {
     marginRight: '2%',
