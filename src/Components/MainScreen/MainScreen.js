@@ -41,14 +41,13 @@ export default class MainScreen extends Component {
 
     // Requisição dos nomes de cada pokemon e os links para as próximas páginas
     var response = await API.get();
-    console.log(response);
+    // console.log(response);
     this.setState({
       Names: response.data.results,
       loading: false,
       nextPage: response.data.next,
       previousPage: response.data.previous,
     });
-
   }
 
   previousPage = async () => {
@@ -105,11 +104,12 @@ export default class MainScreen extends Component {
     this.props.navigation.navigate('Character', {id: id});
   }
 
-  
   renderItem = data => {
     // Define a numeração do pokemon
+    // const teste = data.item;
+    // console.log('teste: ', teste);
     const url = data.item.url;
-
+    // console.log('URL: ', url);
     const pokemonNumber = url.split('/')[url.split('/').length - 2];
     // Pega a imagem do pokemon de acordo com sua numeração
     const imageUrl =
@@ -117,14 +117,7 @@ export default class MainScreen extends Component {
     // Muda a primeira letra do nome do pokemon para maiúsculo
     const name = data.item.name;
     const pokemonName = name.charAt(0).toUpperCase() + name.slice(1);
-    // // Pega o type do pokemon
-    // const types = data.types.map(type => type.type.name);
-    // console.log(types)
-    // const pokemonType = types.toString().split(',', 6);
-    // this.setState({
-    //   type: pokemonType[0],
-    // });
-
+    
     return (
       <View style={styles.gridContainer}>
         <TouchableOpacity onPress={() => this.CharacterScreen(pokemonNumber)}>

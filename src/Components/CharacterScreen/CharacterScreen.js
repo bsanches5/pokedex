@@ -6,11 +6,11 @@ import {
   Image,
   ActivityIndicator,
   StatusBar,
-  ProgressBarAndroid,
   ScrollView,
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 
 import API from '../.././Services/API';
 
@@ -69,6 +69,7 @@ export default class CharacterScreen extends Component {
       specialAttack: 0,
       specialDefense: 0,
       loading: false,
+      type: '',
     };
 
     this.voltar = this.voltar.bind(this);
@@ -93,6 +94,7 @@ export default class CharacterScreen extends Component {
 
     // Seleção da cor para ser usada
     const types = response.data.types.map(type => type.type.name);
+    this.setState({type: types[0]})
     themeColor = `${TYPE_COLORS[types[types.length - 1]]}`;
     this.setState({color: themeColor});
 
@@ -132,6 +134,7 @@ export default class CharacterScreen extends Component {
     const pokemonNumber = this.props.route.params.id;
     const imageUrl =
       'https://pokeres.bastionbot.org/images/pokemon/' + pokemonNumber + '.png';
+    const formatedType = this.state.type.charAt(0).toUpperCase() + this.state.type.slice(1)
 
     if (!loading) {
       return (
@@ -160,16 +163,20 @@ export default class CharacterScreen extends Component {
             </View>
             {/* View para segunda caixa (a parte branca com as quinas de cima arrendondadas) */}
             <View style={[styles.box2, {backgroundColor: 'white'}]}>
+            <Text style={[styles.titulo, {color: themeColor}]}>
+                Type
+              </Text>
+              <Text style={styles.descricao}>{formatedType}</Text>
               {/* Descrição do pokemon */}
               <Text style={[styles.titulo, {color: themeColor}]}>
-                Descrição
+                Description
               </Text>
               <Text style={styles.descricao}>{this.state.descricao}</Text>
               {/* Status do pokemon */}
-              <Text style={[styles.titulo, {color: themeColor}]}>Status</Text>
+              <Text style={[styles.titulo, {color: themeColor}]}>Stats</Text>
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>HP</Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -182,7 +189,7 @@ export default class CharacterScreen extends Component {
 
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>Attack</Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -197,7 +204,7 @@ export default class CharacterScreen extends Component {
                 <Text style={[styles.status, {color: themeColor}]}>
                   Defense
                 </Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -210,7 +217,7 @@ export default class CharacterScreen extends Component {
 
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>Speed</Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -225,7 +232,7 @@ export default class CharacterScreen extends Component {
                 <Text style={[styles.status, {color: themeColor}]}>
                   Special Attack
                 </Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -240,7 +247,7 @@ export default class CharacterScreen extends Component {
                 <Text style={[styles.status, {color: themeColor}]}>
                   Special Defense
                 </Text>
-                <ProgressBarAndroid
+                <ProgressBar
                   style={[styles.progressBar, {color: themeColor}]}
                   styleAttr="Horizontal"
                   indeterminate={false}
@@ -252,30 +259,30 @@ export default class CharacterScreen extends Component {
               </View>
               {/* Informações básicas do pokemon */}
               <Text style={[styles.titulo, {color: themeColor}]}>
-                Informações básicas
+                Basic Infos
               </Text>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.infoTitle, {color: themeColor}]}>
-                  Peso:{' '}
+                  Weight:{' '}
                 </Text>
                 <Text style={styles.info}>
-                  {this.state.peso} hectogramas ({this.state.pesoKg}{' '}
-                  quilogramas)
+                  {this.state.peso} hectograms ({this.state.pesoKg}{' '}
+                  kg)
                 </Text>
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.infoTitle, {color: themeColor}]}>
-                  Altura:{' '}
+                  Height:{' '}
                 </Text>
                 <Text style={styles.info}>
-                  {this.state.altura} decimetros ({this.state.alturaM} metros)
+                  {this.state.altura} decimeters ({this.state.alturaM} m)
                 </Text>
               </View>
               <View style={{flexDirection: 'row', marginBottom: '3%'}}>
                 <Text style={[styles.infoTitle, {color: themeColor}]}>
-                  Experiência base:{' '}
+                  Base Experience:{' '}
                 </Text>
-                <Text style={styles.info}>{this.state.expBase} pontos</Text>
+                <Text style={styles.info}>{this.state.expBase} XP</Text>
               </View>
             </View>
           </View>
