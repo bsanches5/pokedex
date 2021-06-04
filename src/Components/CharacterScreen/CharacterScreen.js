@@ -54,7 +54,6 @@ export default class CharacterScreen extends Component {
     super(props);
 
     this.state = {
-      elementos: [],
       nome: '',
       peso: '',
       pesoKg: '',
@@ -141,6 +140,7 @@ export default class CharacterScreen extends Component {
         <ScrollView style={{flex: 1, backgroundColor: themeColor}}>
           <StatusBar backgroundColor={themeColor} barStyle="light-content" />
           <View style={styles.container}>
+
             <View style={[styles.box1, {backgroundColor: themeColor}]}>
               <View style={styles.header}>
                 <TouchableOpacity
@@ -148,31 +148,23 @@ export default class CharacterScreen extends Component {
                   onPress={this.voltar}>
                   <Icon name="arrow-left" size={35} color="#FFF" />
                 </TouchableOpacity>
-
-                <Text style={styles.pokemonName}>
-                  {this.pokemonNameToUpperCase(this.state.nome)}
-                </Text>
-
                 <Text style={styles.pokemonIndex}>#{pokemonNumber}</Text>
               </View>
-              <Image
+            </View>
+
+            <View style={[styles.box2, {backgroundColor: 'white'}]}>
+            <Image
                 resizeMode="contain"
                 source={{uri: imageUrl}}
-                style={styles.imagem}
+                style={[styles.imagem, {
+                  top: -125,
+                  position: 'absolute'
+                }]}
               />
-            </View>
-            {/* View para segunda caixa (a parte branca com as quinas de cima arrendondadas) */}
-            <View style={[styles.box2, {backgroundColor: 'white'}]}>
-            <Text style={[styles.titulo, {color: themeColor}]}>
-                Type
-              </Text>
-              <Text style={styles.descricao}>{formatedType}</Text>
-              {/* Descrição do pokemon */}
-              <Text style={[styles.titulo, {color: themeColor}]}>
-                Description
-              </Text>
-              <Text style={styles.descricao}>{this.state.descricao}</Text>
-              {/* Status do pokemon */}
+            <Text style={[styles.pokemonName, {color: themeColor}]}>
+                  {this.pokemonNameToUpperCase(this.state.nome)}
+                </Text>
+              <Text style={styles.typeText}>{formatedType}</Text>
               <Text style={[styles.titulo, {color: themeColor}]}>Stats</Text>
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>HP</Text>
@@ -186,7 +178,6 @@ export default class CharacterScreen extends Component {
                   {this.state.hp}
                 </Text>
               </View>
-
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>Attack</Text>
                 <ProgressBar
@@ -199,7 +190,6 @@ export default class CharacterScreen extends Component {
                   {this.state.attack}
                 </Text>
               </View>
-
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>
                   Defense
@@ -214,7 +204,6 @@ export default class CharacterScreen extends Component {
                   {this.state.defense}
                 </Text>
               </View>
-
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>Speed</Text>
                 <ProgressBar
@@ -227,7 +216,6 @@ export default class CharacterScreen extends Component {
                   {this.state.speed}
                 </Text>
               </View>
-
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>
                   Special Attack
@@ -242,7 +230,6 @@ export default class CharacterScreen extends Component {
                   {this.state.specialAttack}
                 </Text>
               </View>
-
               <View style={styles.directionStatus}>
                 <Text style={[styles.status, {color: themeColor}]}>
                   Special Defense
@@ -257,11 +244,11 @@ export default class CharacterScreen extends Component {
                   {this.state.specialDefense}
                 </Text>
               </View>
-              {/* Informações básicas do pokemon */}
               <Text style={[styles.titulo, {color: themeColor}]}>
                 Basic Infos
               </Text>
-              <View style={{flexDirection: 'row'}}>
+              <Text style={styles.description}>{this.state.descricao}</Text>
+              <View style={{flexDirection: 'row'}}>    
                 <Text style={[styles.infoTitle, {color: themeColor}]}>
                   Weight:{' '}
                 </Text>
@@ -278,7 +265,7 @@ export default class CharacterScreen extends Component {
                   {this.state.altura} decimeters ({this.state.alturaM} m)
                 </Text>
               </View>
-              <View style={{flexDirection: 'row', marginBottom: '3%'}}>
+              <View style={{flexDirection: 'row', marginBottom: '8%'}}>
                 <Text style={[styles.infoTitle, {color: themeColor}]}>
                   Base Experience:{' '}
                 </Text>
@@ -303,8 +290,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     height: 160,
     width: 160,
-    marginTop: '-2%',
-    marginBottom: '8%',
+    alignSelf: 'center'
   },
   infoTitle: {
     fontSize: 18,
@@ -323,7 +309,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginBottom: '2%',
-    marginTop: '8%',
+    marginTop: '5%',
   },
   box1: {
     alignItems: 'center',
@@ -338,6 +324,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
+    backgroundColor: '#000',
+    paddingTop: 18,
+    marginTop: 90,
   },
   arrowButton: {
     marginTop: '2.55%',
@@ -348,7 +337,14 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
   },
-  descricao: {
+  description: {
+    fontSize: 18,
+    color: 'grey',
+    alignSelf: 'center',
+    marginHorizontal: '8%',
+    marginBottom: 15,
+  },
+  typeText: {
     fontSize: 18,
     color: 'grey',
     alignSelf: 'center',
@@ -362,11 +358,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   pokemonName: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
-    color: 'white',
     marginTop: '2.55%',
     padding: '2%',
+    alignSelf: 'center'
   },
   pokemonIndex: {
     fontSize: 22,

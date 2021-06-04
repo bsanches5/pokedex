@@ -23,7 +23,7 @@ export default class MainScreen extends Component {
     super(props);
 
     this.state = {
-      Names: [],
+      names: [],
       loading: true,
       counter: counter,
       previousPage: '',
@@ -32,7 +32,7 @@ export default class MainScreen extends Component {
     };
 
     this.CharacterScreen = this.CharacterScreen.bind(this);
-    this.getID = this.getID.bind(this);
+    this.getPokemonID = this.getPokemonID.bind(this);
   }
 
   async componentDidMount() {
@@ -43,7 +43,7 @@ export default class MainScreen extends Component {
     var response = await API.get();
     // console.log(response);
     this.setState({
-      Names: response.data.results,
+      names: response.data.results,
       loading: false,
       nextPage: response.data.next,
       previousPage: response.data.previous,
@@ -51,7 +51,7 @@ export default class MainScreen extends Component {
   }
 
   previousPage = async () => {
-    // Verificação caso o usuário já permanece na primeira página
+    // Verificaça se o usuário está na primeira página
     if (counter !== 1) {
       counter--;
       this.setState({counter: counter});
@@ -60,7 +60,7 @@ export default class MainScreen extends Component {
       // Puxa os dados da página anterior
       var response = await API.get(previousPage);
       this.setState({
-        Names: response.data.results,
+        names: response.data.results,
         previousPage: response.data.previous,
         nextPage: response.data.next,
       });
@@ -68,7 +68,7 @@ export default class MainScreen extends Component {
   };
 
   nextPage = async () => {
-    // Verificação caso o usuário já permanece na última página
+    // Verifica se o usuário está na última página
     if (counter !== 29) {
       counter++;
       this.setState({counter: counter});
@@ -77,15 +77,15 @@ export default class MainScreen extends Component {
       // Puxa os dados da página seguinte
       var response = await API.get(nextPage);
       this.setState({
-        Names: response.data.results,
+        names: response.data.results,
         previousPage: response.data.previous,
         nextPage: response.data.next,
       });
     }
   };
 
-  especificPage = async (cont, offset) => {
-    counter = cont;
+  especificPage = async (count, offset) => {
+    counter = count;
     this.setState({counter: counter});
 
     // Puxa os dados da página específica da busca
@@ -93,7 +93,7 @@ export default class MainScreen extends Component {
       'https://pokeapi.co/api/v2/pokemon/?offset=' + offset + '&limit=20',
     );
     this.setState({
-      Names: response.data.results,
+      names: response.data.results,
       previousPage: response.data.previous,
       nextPage: response.data.next,
     });
@@ -105,11 +105,7 @@ export default class MainScreen extends Component {
   }
 
   renderItem = data => {
-    // Define a numeração do pokemon
-    // const teste = data.item;
-    // console.log('teste: ', teste);
     const url = data.item.url;
-    // console.log('URL: ', url);
     const pokemonNumber = url.split('/')[url.split('/').length - 2];
     // Pega a imagem do pokemon de acordo com sua numeração
     const imageUrl =
@@ -117,7 +113,7 @@ export default class MainScreen extends Component {
     // Muda a primeira letra do nome do pokemon para maiúsculo
     const name = data.item.name;
     const pokemonName = name.charAt(0).toUpperCase() + name.slice(1);
-    
+
     return (
       <View style={styles.gridContainer}>
         <TouchableOpacity onPress={() => this.CharacterScreen(pokemonNumber)}>
@@ -127,7 +123,7 @@ export default class MainScreen extends Component {
             <Image
               resizeMode="contain"
               source={{uri: imageUrl}}
-              style={styles.image}
+              style={styles.images}
             />
             <Text style={styles.nomePokemon}>{pokemonName}</Text>
           </View>
@@ -136,36 +132,31 @@ export default class MainScreen extends Component {
     );
   };
 
-  getID = async value => {
+  getPokemonID = async value => {
     // Pega o id do pokemon de acordo com o nome ou id digitado
     const response = await API.get(value + '/');
     this.setState({
       id: response.data.id,
     });
-    const valueId = parseInt(response.data.id);
-    let page = Math.ceil(valueId / 20);
+    const idNumber = parseInt(response.data.id);
+    let page = Math.ceil(idNumber / 20);
     let limit = (page - 1) * 20;
 
     // Faz a busca utilizando o id pesquisado
-    if (valueId <= 0)
-      Alert.alert(
-        'Erro na busca!',
-        'Não existem pokemons com ID menores ou iguais à zero!',
-      );
-    else if (valueId > 0 && valueId <= 807) {
+    if (idNumber > 0 && idNumber <= 807) {
       this.especificPage(page, limit);
-    } else if (valueId != '' && valueId != null) {
-      Alert.alert('Erro na busca!', 'O nome/ID digitado não foi encontrado!');
+    } else if (idNumber != '' && idNumber != null) {
+      Alert.alert('Error!', 'Name or ID not found!');
       this.especificPage(1, 1);
     } else this.especificPage(1, 1);
   };
 
   render() {
-    const {Names, loading} = this.state;
+    const {names, loading} = this.state;
 
     if (!loading) {
       return (
-        <View style={{flex: 1, backgroundColor: '#fc474f'}}>
+        <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.title}>Pokedéx</Text>
             <View style={styles.subHeader}>
@@ -175,14 +166,16 @@ export default class MainScreen extends Component {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Buscar por nome ou ID..."
-                onChangeText={value => this.getID(value.toLocaleLowerCase())}
+                placeholder="Search for name or ID..."
+                onChangeText={value =>
+                  this.getPokemonID(value.toLocaleLowerCase())
+                }
                 underlineColorAndroid="transparent"
               />
             </View>
           </View>
 
-          <View style={styles.containerArrows}>
+          <View style={styles.arrowsContainer}>
             <View style={{flex: 1}}>
               {this.state.counter === 1 ? null : (
                 <TouchableOpacity
@@ -194,7 +187,7 @@ export default class MainScreen extends Component {
             </View>
 
             <View style={{flex: 1}}>
-              <Text style={styles.countFont}>{this.state.counter}</Text>
+              <Text style={styles.counterText}>{this.state.counter}</Text>
             </View>
 
             <View style={{flex: 1}}>
@@ -210,7 +203,7 @@ export default class MainScreen extends Component {
 
           <FlatList
             numColumns={2}
-            data={Names}
+            data={names}
             extraData={pokemonNumber}
             refreshing={true}
             renderItem={this.renderItem}
@@ -228,8 +221,7 @@ export default class MainScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#fc474f',
   },
   gridButtons: {
     margin: '5%',
@@ -264,18 +256,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
   },
-  image: {
+  images: {
     height: 100,
     width: 100,
-  },
-  iconArrow: {
-    color: 'white',
-    height: 50,
-    width: '20%',
-  },
-  imageSearch: {
-    height: 20,
-    width: 20,
   },
   arrowButtonLeft: {
     marginTop: '2.55%',
@@ -291,13 +274,7 @@ const styles = StyleSheet.create({
     marginBottom: '2.5%',
     alignSelf: 'flex-end',
   },
-  count: {
-    marginTop: '2.55%',
-    marginHorizontal: '5%',
-    padding: '2%',
-    marginBottom: '2.5%',
-  },
-  containerArrows: {
+  arrowsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -305,7 +282,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70,
   },
-  countFont: {
+  counterText: {
     fontWeight: 'bold',
     fontSize: 25,
     color: '#FFF',
