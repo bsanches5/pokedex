@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 
-import API from '../.././Services/API';
+import API from '../../services/API';
 
 // Cores para serem usadas de acordo com o elemento do pokemon
 let themeColor;

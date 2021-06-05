@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import API from '../../Services/API';
+import API from '../../services/API';
 
 let pokemonNumber = 1,
   counter = 1;
